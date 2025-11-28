@@ -61,15 +61,15 @@ public class AuthController : ControllerBase
             return Unauthorized(new { message = "Invalid credentials." });
 
         var roles = await _userManager.GetRolesAsync(user);
-        var token = GenerateJwtToken(user, roles.FirstOrDefault() ?? "Seeker");
+        var token = GenerateJwtToken(user, roles.FirstOrDefault() ?? "Seeker", JwtRegisteredClaimNames);
         return Ok(new { token });
     }
 
-    private string GenerateJwtToken(ApplicationUser user, string role)
+    private string GenerateJwtToken(ApplicationUser user, string role, JwtRegisteredClaimNames jwtRegisteredClaimNames)
     {
         var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+            new Claim(jwtRegisteredClaimNames.Sub, user.Id),
             new Claim(JwtRegisteredClaimNames.Email, user.Email ?? ""),
             new Claim(ClaimTypes.Name, user.UserName ?? ""),
             new Claim(ClaimTypes.Role, role)
